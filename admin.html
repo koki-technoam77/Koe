@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KoeGuide Admin - 自治体管理</title>
+  <style>
+    :root {
+      --navy: #1b4965;
+      --navy-light: #2d6a8f;
+      --accent: #62b6cb;
+      --accent-light: #bee9e8;
+      --bg: #f0f4f8;
+      --white: #ffffff;
+      --text: #1a1a2e;
+      --text-light: #5a6178;
+      --success: #2ecc71;
+      --warning: #f39c12;
+      --danger: #e74c3c;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Helvetica Neue', 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(135deg, var(--navy), var(--navy-light));
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 { font-size: 1.3rem; }
+    header a { color: var(--accent-light); text-decoration: none; font-size: 0.9rem; }
+    header a:hover { text-decoration: underline; }
+    .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+
+    /* Add Form */
+    .add-form {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 12px rgba(27,73,101,0.1);
+      margin-bottom: 1.5rem;
+    }
+    .add-form h2 {
+      font-size: 1rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr auto;
+      gap: 0.8rem;
+      align-items: end;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-light);
+    }
+    .form-group input {
+      padding: 0.6rem 0.8rem;
+      border: 1px solid #d1d9e0;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus { border-color: var(--accent); }
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--navy);
+      color: white;
+    }
+    .btn-primary:hover { background: var(--navy-light); }
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+    .btn-success:hover { opacity: 0.9; }
+    .btn-warning {
+      background: var(--warning);
+      color: white;
+    }
+    .btn-danger {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+    }
+    .btn-danger:hover { background: var(--danger); color: white; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Municipality List */
+    .municipality-list {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(27,73,101,0.1);
+      overflow: hidden;
+    }
+    .list-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #e8ecf1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .list-header h2 {
+      font-size: 1rem;
+      color: var(--navy);
+    }
+    .municipality-item {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #f0f2f5;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: background 0.2s;
+    }
+    .municipality-item:hover { background: #f8fafc; }
+    .municipality-item:last-child { border-bottom: none; }
+    .muni-info { flex: 1; }
+    .muni-name {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text);
+    }
+    .muni-name .en { font-weight: 400; color: var(--text-light); margin-left: 0.3rem; }
+    .muni-meta {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: 0.3rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .muni-url {
+      font-size: 0.75rem;
+      color: var(--accent);
+      word-break: break-all;
+    }
+    .muni-actions { display: flex; gap: 0.5rem; }
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .badge-success { background: #d4edda; color: #155724; }
+    .badge-warning { background: #fff3cd; color: #856404; }
+    .badge-info { background: #d1ecf1; color: #0c5460; }
+
+    /* Deploy Section */
+    .deploy-section {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 12px rgba(27,73,101,0.1);
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+    .deploy-section p {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-bottom: 1rem;
+    }
+    .deploy-btn {
+      padding: 0.8rem 2rem;
+      font-size: 1rem;
+    }
+
+    /* Status Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      color: white;
+      font-size: 0.9rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s;
+      z-index: 1000;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.success { background: var(--success); }
+    .toast.error { background: var(--danger); }
+    .toast.info { background: var(--navy); }
+
+    .empty-state {
+      padding: 3rem;
+      text-align: center;
+      color: var(--text-light);
+    }
+    .empty-state p { margin-top: 0.5rem; font-size: 0.9rem; }
+
+    @media (max-width: 700px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🏛️ KoeGuide Admin</h1>
+    <a href="/">← メインアプリに戻る</a>
+  </header>
+
+  <div class="container">
+    <!-- Add Municipality Form -->
+    <div class="add-form">
+      <h2>📋 自治体を追加</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>自治体名</label>
+          <input type="text" id="muni-name" placeholder="例: 渋谷区">
+        </div>
+        <div class="form-group">
+          <label>ゴミ収集ページURL</label>
+          <input type="url" id="muni-url" placeholder="https://www.city.shibuya.tokyo.jp/kurashi/gomi/">
+        </div>
+        <div class="form-group">
+          <label>英語名 (任意)</label>
+          <input type="text" id="muni-name-en" placeholder="Shibuya City">
+        </div>
+        <button class="btn btn-primary" onclick="addMunicipality()">追加 & スクレイピング</button>
+      </div>
+    </div>
+
+    <!-- Municipality List -->
+    <div class="municipality-list">
+      <div class="list-header">
+        <h2>登録済み自治体</h2>
+        <span id="count-badge"></span>
+      </div>
+      <div id="municipality-list-body">
+        <div class="empty-state">
+          <h3>まだ自治体が登録されていません</h3>
+          <p>上のフォームからゴミ収集ページのURLを追加してください</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deploy Section -->
+    <div class="deploy-section">
+      <p>スクレイピング完了後、データをエージェントのプロンプトに反映します</p>
+      <button class="btn btn-success deploy-btn" onclick="deployPrompt()">
+        🚀 エージェントに反映
+      </button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Show toast notification
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast ${type} show`;
+      setTimeout(() => toast.className = 'toast', 3000);
+    }
+
+    // Load municipality list
+    async function loadMunicipalities() {
+      try {
+        const resp = await fetch('/api/municipalities');
+        const data = await resp.json();
+        renderList(data);
+      } catch (e) {
+        showToast('読み込みに失敗しました', 'error');
+      }
+    }
+
+    // Render municipality list
+    function renderList(municipalities) {
+      const body = document.getElementById('municipality-list-body');
+      const badge = document.getElementById('count-badge');
+
+      if (municipalities.length === 0) {
+        body.innerHTML = `
+          <div class="empty-state">
+            <h3>まだ自治体が登録されていません</h3>
+            <p>上のフォームからゴミ収集ページのURLを追加してください</p>
+          </div>`;
+        badge.textContent = '';
+        return;
+      }
+
+      badge.textContent = `${municipalities.length}件`;
+
+      body.innerHTML = municipalities.map(m => `
+        <div class="municipality-item" id="muni-${m.id}">
+          <div class="muni-info">
+            <div class="muni-name">
+              ${m.name}
+              ${m.name_en ? `<span class="en">(${m.name_en})</span>` : ''}
+            </div>
+            <div class="muni-url">${m.garbage_url}</div>
+            <div class="muni-meta">
+              ${m.has_cache
+                ? `<span class="badge badge-success">スクレイピング済</span>`
+                : `<span class="badge badge-warning">未スクレイピング</span>`}
+              ${m.has_structured
+                ? `<span class="badge badge-info">構造化済</span>`
+                : ''}
+              ${m.cache_chars
+                ? `<span>${m.cache_chars.toLocaleString()}文字</span>`
+                : ''}
+              ${m.last_scraped
+                ? `<span>最終: ${new Date(m.last_scraped).toLocaleString('ja-JP')}</span>`
+                : ''}
+            </div>
+          </div>
+          <div class="muni-actions">
+            <button class="btn btn-warning" onclick="rescrape('${m.id}')">再スクレイピング</button>
+            <button class="btn btn-danger" onclick="deleteMunicipality('${m.id}', '${m.name}')">削除</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Add municipality
+    async function addMunicipality() {
+      const name = document.getElementById('muni-name').value.trim();
+      const url = document.getElementById('muni-url').value.trim();
+      const nameEn = document.getElementById('muni-name-en').value.trim();
+
+      if (!name || !url) {
+        showToast('自治体名とURLを入力してください', 'error');
+        return;
+      }
+
+      showToast(`${name} を追加中...`, 'info');
+
+      try {
+        const resp = await fetch('/api/municipalities', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, garbage_url: url, name_en: nameEn }),
+        });
+        const data = await resp.json();
+
+        if (resp.ok) {
+          showToast(`${name} を追加しました。スクレイピング中...`, 'success');
+          document.getElementById('muni-name').value = '';
+          document.getElementById('muni-url').value = '';
+          document.getElementById('muni-name-en').value = '';
+
+          // Poll for completion
+          setTimeout(() => loadMunicipalities(), 3000);
+          setTimeout(() => loadMunicipalities(), 8000);
+          setTimeout(() => loadMunicipalities(), 15000);
+        } else {
+          showToast(data.error || '追加に失敗しました', 'error');
+        }
+      } catch (e) {
+        showToast('サーバーエラー', 'error');
+      }
+    }
+
+    // Re-scrape municipality
+    async function rescrape(id) {
+      showToast('再スクレイピング中...', 'info');
+      try {
+        await fetch(`/api/municipalities/${id}/scrape`, { method: 'POST' });
+        showToast('スクレイピング開始しました', 'success');
+        setTimeout(() => loadMunicipalities(), 5000);
+        setTimeout(() => loadMunicipalities(), 12000);
+      } catch (e) {
+        showToast('エラーが発生しました', 'error');
+      }
+    }
+
+    // Delete municipality
+    async function deleteMunicipality(id, name) {
+      if (!confirm(`${name} を削除しますか？`)) return;
+      try {
+        await fetch(`/api/municipalities/${id}`, { method: 'DELETE' });
+        showToast(`${name} を削除しました`, 'success');
+        loadMunicipalities();
+      } catch (e) {
+        showToast('削除に失敗しました', 'error');
+      }
+    }
+
+    // Deploy prompt
+    async function deployPrompt() {
+      showToast('エージェントにデプロイ中...', 'info');
+      try {
+        const resp = await fetch('/api/deploy-prompt', { method: 'POST' });
+        const data = await resp.json();
+        if (resp.ok) {
+          showToast(`デプロイ完了！(${data.prompt_length.toLocaleString()}文字)`, 'success');
+        } else {
+          showToast(data.error || 'デプロイに失敗しました', 'error');
+        }
+      } catch (e) {
+        showToast('サーバーエラー', 'error');
+      }
+    }
+
+    // Init
+    loadMunicipalities();
+  </script>
+</body>
+</html>

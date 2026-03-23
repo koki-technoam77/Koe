@@ -1,0 +1,6 @@
+flask>=3.0
+flask-cors>=4.0
+requests>=2.31
+vocal-bridge>=0.14
+beautifulsoup4>=4.12
+anthropic>=0.40

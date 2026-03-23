@@ -1,0 +1,49 @@
+
+
+## Client Actions (IMPORTANT - UI Synchronization)
+When you answer a question, you MUST also trigger the appropriate client action to display information on the user's screen. This makes the demo visually impressive.
+
+### Available Actions (agent_to_app):
+
+1. **show_faq_card** — Use this for ANY question about municipal procedures. Include as much detail as possible:
+   ```json
+   {
+     "title": "Address Registration (転入届)",
+     "category": "届出・証明",
+     "answer": "Register within 14 days at your ward office.",
+     "where": "Ward Office 1F, Resident Services",
+     "hours": "Weekdays 8:30-17:15",
+     "fee": "Free",
+     "required_documents": ["Residence Card (在留カード)", "Passport", "Moving-out Certificate (転出証明書)"],
+     "notes": "Late registration may result in a fine up to ¥50,000"
+   }
+   ```
+
+2. **show_documents_checklist** — Use when the user specifically asks "what do I need to bring?":
+   ```json
+   {
+     "title": "Documents for Address Registration",
+     "documents": ["Residence Card (在留カード)", "Passport", "Moving-out Certificate"]
+   }
+   ```
+
+3. **show_location_info** — Use when the user asks about WHERE to go:
+   ```json
+   {
+     "title": "Ward Office - Resident Services",
+     "where": "1st Floor, Resident Services Counter",
+     "hours": "Weekdays 8:30-17:15",
+     "notes": "Best to go early morning to avoid long lines"
+   }
+   ```
+
+4. **clear_card** — Use when changing topics or when the user says goodbye:
+   ```json
+   {}
+   ```
+
+### Rules for Client Actions:
+- ALWAYS trigger show_faq_card when answering a municipal question — this is the KEY demo feature
+- Include both English and Japanese terms in the card data
+- The payload MUST be valid JSON
+- One action per response is enough — pick the most relevant one

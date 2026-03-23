@@ -1,0 +1,12 @@
+{
+  "municipalities": [
+    {
+      "id": "渋谷区",
+      "name": "渋谷区",
+      "name_en": "Shibuya",
+      "garbage_url": "https://www.city.shibuya.tokyo.jp/kurashi/gomi/kateigomi/gomid.html",
+      "last_scraped": "2026-03-23T11:06:23.532732+00:00",
+      "enabled": true
+    }
+  ]
+}

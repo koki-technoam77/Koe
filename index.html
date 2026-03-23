@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KoeGuide - AIコンシェルジュ</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/livekit-client@2.9.1/dist/livekit-client.umd.js"></script>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🏛️</span>
+        <h1>KoeGuide <span class="subtitle">AIコンシェルジュ</span></h1>
+      </div>
+      <div class="header-right">
+        <div class="stt-lang-selector">
+          <label class="stt-label">🎤</label>
+          <select id="stt-lang" onchange="changeSttLang(this.value)">
+            <option value="ja">日本語</option>
+            <option value="en">English</option>
+            <option value="multi">Multi</option>
+          </select>
+        </div>
+        <button class="lang-toggle" id="lang-toggle" onclick="toggleLang()">EN</button>
+        <div class="status" id="status">
+          <span class="status-dot offline"></span>
+          <span id="status-text">未接続</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Left: Transcript -->
+    <section class="panel transcript-panel">
+      <h2 data-i18n="transcript_title">会話履歴</h2>
+      <div class="transcript-list" id="transcript"></div>
+    </section>
+
+    <!-- Center: Mic Button -->
+    <section class="panel center-panel">
+      <div class="agent-status" id="agent-status"></div>
+      <button class="mic-btn" id="mic-btn" onclick="toggleConnection()">
+        <svg class="mic-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+          <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+        </svg>
+      </button>
+      <p class="mic-label" id="mic-label" data-i18n="mic_start">タップして開始</p>
+      <div class="pulse-ring" id="pulse-ring"></div>
+    </section>
+
+    <!-- Right: Info Cards -->
+    <section class="panel info-panel">
+      <h2 data-i18n="info_title">情報カード</h2>
+      <div id="info-cards">
+        <div class="welcome-card">
+          <h3 data-i18n="welcome">ようこそ！</h3>
+          <p data-i18n="welcome_desc">マイクボタンを押して質問してください。</p>
+          <p class="hint" data-i18n="welcome_hint">例: 「転入届はどうすればいいですか？」</p>
+          <div class="sample-questions">
+            <button class="sample-q" onclick="showSampleHint('転入届')" data-i18n="sample_move_in">🏠 転入届</button>
+            <button class="sample-q" onclick="showSampleHint('住民票')" data-i18n="sample_resident_cert">📄 住民票</button>
+            <button class="sample-q" onclick="showSampleHint('ゴミの出し方')" data-i18n="sample_garbage">🗑️ ゴミ分別</button>
+            <button class="sample-q" onclick="showSampleHint('児童手当')" data-i18n="sample_child_allow">👶 児童手当</button>
+            <button class="sample-q" onclick="showSampleHint('避難場所')" data-i18n="sample_evacuation">🏃 避難場所</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>KoeGuide Demo — Powered by <a href="https://vocalbridgeai.com" target="_blank">Vocal Bridge</a></p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

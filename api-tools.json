@@ -1,0 +1,25 @@
+[
+  {
+    "id": "1",
+    "name": "get_garbage_info",
+    "description": "Get detailed garbage collection information for a specific municipality in Japan, including collection schedules, sorting rules, bag requirements, and disposal methods. Call this when users ask about garbage, trash, recycling, waste disposal, or ゴミ for a specific area. If no municipality is specified, returns a list of available municipalities.",
+    "method": "GET",
+    "url": "https://REPLACE_WITH_NGROK_URL/api/garbage-info",
+    "parameters": [
+      {
+        "name": "municipality",
+        "type": "string",
+        "description": "Municipality name in Japanese (e.g., '渋谷区') or English (e.g., 'Shibuya'). If omitted, returns available municipalities.",
+        "required": false,
+        "location": "query"
+      },
+      {
+        "name": "category",
+        "type": "string",
+        "description": "Specific garbage category to query (e.g., '燃えるゴミ', 'burnable', 'recyclable', '粗大ゴミ'). If omitted, returns all categories.",
+        "required": false,
+        "location": "query"
+      }
+    ]
+  }
+]
